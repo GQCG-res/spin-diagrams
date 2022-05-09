@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this paper, please cite it as below."
+authors:
+- family-names: "Lemmens"
+  given-names: "Laurent"
+  orcid: "https://orcid.org/0000-0002-8255-5784"
+- family-names: "De Vriendt"
+  given-names: "Xeno"
+  orcid: "https://orcid.org/0000-0003-4260-8658"
+- family-names: "Patrick"
+  given-names: "Bultinck"
+  orcid: "https://orcid.org/0000-0003-2766-2672"
+- family-names: "Guillaume"
+  given-names: "Acke"
+  orcid: "https://orcid.org/0000-0001-6613-5707"
+title: "Analyzing the behavior of spin phases in external magnetic fields by means of spin constrained states"
+version: 1.0.0
+doi: 
+date-released: 2022-06-09
+url: "https://github.com/GQCG-res/spin-diagrams"

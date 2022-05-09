@@ -1,0 +1,18 @@
+{
+    "spellright.language": [
+        "nl",
+        "en"
+    ],
+    "spellright.documentTypes": [
+        "markdown",
+        "latex",
+        "plaintext"
+    ],
+    "cSpell.words": [
+        "aiptemplate",
+        "diagonalization",
+        "REVTEX",
+        "substyles",
+        "superscriptaddress"
+    ]
+}
