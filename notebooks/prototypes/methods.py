@@ -4,7 +4,7 @@ import gqcpy
 import numpy as np
 
 
-def do_magnetic_UHF_calculation(molecule, basis_set, B, Sz, C_initial=None, threshold=1.0e-08, max_iter=10000, stability_threshold=1.0e-03, log=False):
+def do_magnetic_UHF_calculation(molecule, basis_set, B, Sz, C_initial=None, threshold=1.0e-08, max_iter=10000, log=False):
     """
         @param Sz:              The spin projection to target.
         @param C_initial:       An initial guess for the UHF expansion coefficients.
@@ -79,7 +79,7 @@ def do_magnetic_UHF_calculation(molecule, basis_set, B, Sz, C_initial=None, thre
     return UHF_energy, UHF_parameters
 
 
-def do_magnetic_GHF_calculation(molecule, basis_set, B, stability_threshold=1.0e-03, mu=None, log=False, threshold=1.0e-08, max_iter=10000, solver_algorithm='Plain'):
+def do_magnetic_GHF_calculation(molecule, basis_set, B, mu=None, log=False, threshold=1.0e-08, max_iter=10000, solver_algorithm='Plain'):
     """
         @param stability            A boolean indicating if stability analysis should be performed.
         @param mu                   A 3-vector of Lagrange multipliers, signaling to do a modified GHF calculation.
