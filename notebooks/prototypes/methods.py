@@ -4,7 +4,7 @@ import gqcpy
 import numpy as np
 
 
-def do_magnetic_UHF_calculation(molecule, basis_set, B, Sz, C_initial=None, threshold=1.0e-08, max_iter=10000, log=False):
+def do_magnetic_UHF_calculation(molecule, basis_set, B, Sz, C_initial=None, threshold=1.0e-08, max_iter=10000, log=False, stability=True):
     """
         @param Sz:              The spin projection to target.
         @param C_initial:       An initial guess for the UHF expansion coefficients.
@@ -51,25 +51,25 @@ def do_magnetic_UHF_calculation(molecule, basis_set, B, Sz, C_initial=None, thre
     hamiltonian_MO = hamiltonian_AO.transformed(C)
     stability_matrices = UHF_parameters.calculateStabilityMatrices(hamiltonian_MO)
     internal_stability = stability_matrices.isInternallyStable()
-    
-    while internal_stability is False:
-        if log: print("Following internal instability.")
-        U = stability_matrices.instabilityRotationMatrix(Oa, Ob, Va, Vb)
+    if stability:
+        while internal_stability is False:
+            if log: print("Following internal instability.")
+            U = stability_matrices.instabilityRotationMatrix(Oa, Ob, Va, Vb)
         
-        C.rotate(U)
+            C.rotate(U)
 
-        environment2 = gqcpy.UHFSCFEnvironment_cd(N_alpha, N_beta, hamiltonian_AO, S, C)
+            environment2 = gqcpy.UHFSCFEnvironment_cd(N_alpha, N_beta, hamiltonian_AO, S, C)
 
-        qc_structure = gqcpy.UHF_cd.optimize(solver, environment2)
-        UHF_parameters = qc_structure.groundStateParameters()
-        C2 = UHF_parameters.expansion()
+            qc_structure = gqcpy.UHF_cd.optimize(solver, environment2)
+            UHF_parameters = qc_structure.groundStateParameters()
+            C2 = UHF_parameters.expansion()
 
-        # Check for stability of the GHF solution.
-        hamiltonian_MO2 = hamiltonian_AO.transformed(C2)
-        stability_matrices2 = UHF_parameters.calculateStabilityMatrices(hamiltonian_MO2)
-        if log: stability_matrices2.printStabilityDescription()
+            # Check for stability of the GHF solution.
+            hamiltonian_MO2 = hamiltonian_AO.transformed(C2)
+            stability_matrices2 = UHF_parameters.calculateStabilityMatrices(hamiltonian_MO2)
+            if log: stability_matrices2.printStabilityDescription()
 
-        internal_stability = stability_matrices2.isInternallyStable()
+            internal_stability = stability_matrices2.isInternallyStable()
 
     electronic_energy = qc_structure.groundStateEnergy()
     nuclear_repulsion = gqcpy.NuclearRepulsionOperator(molecule.nuclearFramework()).value()
@@ -79,7 +79,7 @@ def do_magnetic_UHF_calculation(molecule, basis_set, B, Sz, C_initial=None, thre
     return UHF_energy, UHF_parameters
 
 
-def do_magnetic_GHF_calculation(molecule, basis_set, B, mu=None, log=False, threshold=1.0e-08, max_iter=10000, solver_algorithm='Plain'):
+def do_magnetic_GHF_calculation(molecule, basis_set, B, mu=None, log=False, threshold=1.0e-08, max_iter=10000, solver_algorithm='Plain', stability=True):
     """
         @param stability            A boolean indicating if stability analysis should be performed.
         @param mu                   A 3-vector of Lagrange multipliers, signaling to do a modified GHF calculation.
@@ -130,23 +130,24 @@ def do_magnetic_GHF_calculation(molecule, basis_set, B, mu=None, log=False, thre
     stability_matrices = GHF_parameters.calculateStabilityMatrices(hamiltonian_MO)
     internal_stability = stability_matrices.isInternallyStable()
     
-    while internal_stability is False:
-        if log: print("Following internal instability.")
-        U = stability_matrices.instabilityRotationMatrix(N, M-N)
+    if stability:
+        while internal_stability is False:
+            if log: print("Following internal instability.")
+            U = stability_matrices.instabilityRotationMatrix(N, M-N)
 
-        C.rotate(U)
-        environment2 = gqcpy.GHFSCFEnvironment_cd(N, hamiltonian_AO, S_AO, C)
+            C.rotate(U)
+            environment2 = gqcpy.GHFSCFEnvironment_cd(N, hamiltonian_AO, S_AO, C)
 
-        qc_structure = gqcpy.GHF_cd.optimize(solver, environment2)
-        GHF_parameters = qc_structure.groundStateParameters()
-        C2 = GHF_parameters.expansion()
+            qc_structure = gqcpy.GHF_cd.optimize(solver, environment2)
+            GHF_parameters = qc_structure.groundStateParameters()
+            C2 = GHF_parameters.expansion()
 
-        # Check for stability of the GHF solution.
-        hamiltonian_MO2 = hamiltonian_AO.transformed(C2)
-        stability_matrices2 = GHF_parameters.calculateStabilityMatrices(hamiltonian_MO2)
-        if log: stability_matrices2.printStabilityDescription()
+            # Check for stability of the GHF solution.
+            hamiltonian_MO2 = hamiltonian_AO.transformed(C2)
+            stability_matrices2 = GHF_parameters.calculateStabilityMatrices(hamiltonian_MO2)
+            if log: stability_matrices2.printStabilityDescription()
 
-        internal_stability = stability_matrices2.isInternallyStable()
+            internal_stability = stability_matrices2.isInternallyStable()
 
     # Calculate the GHF total energy.
     electronic_energy = qc_structure.groundStateEnergy()

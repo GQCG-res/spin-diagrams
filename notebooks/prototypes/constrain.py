@@ -9,7 +9,7 @@ from prototypes.methods import *
 from prototypes.optimization import *
 
 
-def find_constrained_GHF_state(molecule, basis_set, B, S_z_target, threshold=1.0e-08, max_iter=10000, bracket=None, tolerance=1.0e-08, log=False, method='brentq', solver='Plain'):
+def find_constrained_GHF_state(molecule, basis_set, B, S_z_target, threshold=1.0e-08, max_iter=10000, bracket=None, tolerance=1.0e-08, log=False, method='brentq', solver='Plain', stability=True):
     """
         Attempt to find a GHF state with the requested spin expectation value, using a modified (mu) algorithm.
 
@@ -37,7 +37,7 @@ def find_constrained_GHF_state(molecule, basis_set, B, S_z_target, threshold=1.0
 
         # Do a GHF calculation with the modification dictated by the Lagrange multiplier.
         mu_vector = mu * np.array([0, 0, 1])
-        (E_constrained, GHF_parameters) = do_magnetic_GHF_calculation(molecule, basis_set, B, threshold=threshold, max_iter=max_iter, mu=mu_vector, log=log, stability_threshold=1.0e-03, solver_algorithm=solver)
+        (E_constrained, GHF_parameters) = do_magnetic_GHF_calculation(molecule, basis_set, B, threshold=threshold, max_iter=max_iter, mu=mu_vector, log=log, solver_algorithm=solver, stability=stability)
 
         # Calculate the S_z expectation value for the modified GHF parameters.
         spinor_basis = gqcpy.LondonGSpinorBasis(molecule, basis_set, B)
@@ -95,7 +95,7 @@ def find_constrained_GHF_state(molecule, basis_set, B, S_z_target, threshold=1.0
     # Do the modified GHF calculation again to check if the optimized value actually delivers a valid state.
     if log: print("Using optimized mu {}".format(mu_optimized))
     mu_optimized_vector = mu_optimized * np.array([0, 0, 1])
-    (E_constrained, GHF_parameters) = do_magnetic_GHF_calculation(molecule, basis_set, B, threshold=threshold, max_iter=max_iter, mu=mu_optimized_vector, log=log)
+    (E_constrained, GHF_parameters) = do_magnetic_GHF_calculation(molecule, basis_set, B, threshold=threshold, max_iter=max_iter, mu=mu_optimized_vector, log=log, stability=stability)
 
     spinor_basis = gqcpy.LondonGSpinorBasis(molecule, basis_set, B)
     S_AO = spinor_basis.overlap()
